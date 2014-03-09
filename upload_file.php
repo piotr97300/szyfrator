@@ -28,5 +28,11 @@ if ($_FILES["file"]["error"] > 0) {
     $encrypted = \Model\CyclicXorCipher::encrypt($content, $key);
     echo $encrypted;
     $file->closeFile();
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    $key = new \Model\CyclicKey("lol");
+    $encrypted = \Model\CyclicXorCipher::decrypt($encrypted, $key);
+    echo $encrypted;
 }
 ?>

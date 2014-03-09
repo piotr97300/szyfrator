@@ -9,7 +9,7 @@ class CyclicXorCipher implements Cipher
         $resultContent = new Content("");
         $nextChar = $content->nextChar();
         while (is_string($nextChar)) {
-            $resultContent->append($nextChar);
+            $resultContent->append(chr(ord($nextChar) ^ ord($key->nextChar())));
             $nextChar = $content->nextChar();
         }
         return $resultContent;
