@@ -1,14 +1,20 @@
 <?php
-if ($_FILES["file"]["error"] > 0)
-{
+include_once('Model/File.php');
+include_once('Model/Config.php');
+
+use Model\File;
+use Model\Config;
+
+if ($_FILES["file"]["error"] > 0) {
     echo "Error: " . $_FILES["file"]["error"] . "<br>";
-}
-else
-{
-    echo "Upload: " . $_FILES["file"]["name"] . "<br>";
-    echo "Type: " . $_FILES["file"]["type"] . "<br>";
-    echo "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
-    echo "Stored in: " . $_FILES["file"]["tmp_name"]."<br><br>";
-    echo readfile($_FILES["file"]["tmp_name"]);
+} else {
+    $name = $_FILES["file"]["name"];
+    $path = $_FILES["file"]["tmp_name"];
+    $destination = Config::$tmpPath . $name;
+    move_uploaded_file($path, $destination);
+    $path = $destination;
+    $file = new File($name, $path);
+    echo $file->readFile();
+    $file->closeFile();
 }
 ?>
