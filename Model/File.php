@@ -24,7 +24,7 @@ class File
             $handle = fopen($this->_path, 'r');
             $content = fread($handle, filesize($this->_path));
             fclose($handle);
-            return $content;
+            return new Content($content);
         } else {
             return "404 - file '$this->_path' not found";
         }
