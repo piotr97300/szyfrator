@@ -7,6 +7,7 @@ include_once('Model/Key.php');
 include_once('Model/CyclicKey.php');
 include_once('Model/CyclicXorCipher.php');
 
+use Model\CyclicXorCipher;
 use Model\File;
 use Model\Config;
 
@@ -20,19 +21,10 @@ if ($_FILES["file"]["error"] > 0) {
     $path = $destination;
     $file = new File($name, $path);
     $content = $file->readFile();
-    echo $content;
-    echo '<br>';
-    echo '<br>';
-    echo '<br>';
-    $key = new \Model\CyclicKey("lol");
-    $encrypted = \Model\CyclicXorCipher::encrypt($content, $key);
-    echo $encrypted;
-    $file->closeFile();
-    echo '<br>';
-    echo '<br>';
-    echo '<br>';
-    $key = new \Model\CyclicKey("lol");
-    $encrypted = \Model\CyclicXorCipher::decrypt($encrypted, $key);
-    echo $encrypted;
+
+    $key = new \Model\CyclicKey($_POST['key']);
+
+    $processed = isset($_POST['encrypt']) ? CyclicXorCipher::encrypt($content, $key) : CyclicXorCipher::decrypt($content, $key);
+    echo $processed;
 }
 ?>

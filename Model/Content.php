@@ -41,7 +41,7 @@ class Content
         if ($this->_offset == $this->getLength()) {
             return false;
         } else {
-            $char = str_split($this->_data)[$this->_offset];
+            $char = $this->_data[$this->_offset];
             $this->_offset = $this->_offset + 1;
             return $char;
 
