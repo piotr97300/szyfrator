@@ -24,7 +24,26 @@ if ($_FILES["file"]["error"] > 0) {
 
     $key = new \Model\CyclicKey($_POST['key']);
 
-    $processed = isset($_POST['encrypt']) ? CyclicXorCipher::encrypt($content, $key) : CyclicXorCipher::decrypt($content, $key);
+    $encrypting = isset($_POST['encrypt']);
+    $processed = $encrypting ? CyclicXorCipher::encrypt($content, $key) : CyclicXorCipher::decrypt($content, $key);
+
+    if($encrypting){
+        $name = $file->getFilename().".superencrypted";
+    } else {
+        $name = preg_replace("/\.superencrypted/","",$file->getFilename());
+    }
+
+
+    header('Content-Description: File Transfer');
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename='.$name);
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . strlen($processed));
+    ob_clean();
+    flush();
     echo $processed;
+
 }
 ?>
