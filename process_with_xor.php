@@ -7,6 +7,7 @@ include_once('Model/Key.php');
 include_once('Model/CyclicKey.php');
 include_once('Model/CyclicXorCipher.php');
 
+use Model\CyclicKey;
 use Model\CyclicXorCipher;
 use Model\File;
 use Model\Config;
@@ -20,18 +21,21 @@ if ($_FILES["file"]["error"] > 0) {
     move_uploaded_file($path, $destination);
     $path = $destination;
     $file = new File($name, $path);
+
     $content = $file->readFile();
 
-    $key = new \Model\CyclicKey($_POST['key']);
+    $key = new CyclicKey($_POST['key']);
 
     $encrypting = isset($_POST['encrypt']);
     $processed = $encrypting ? CyclicXorCipher::encrypt($content, $key) : CyclicXorCipher::decrypt($content, $key);
 
+    $ext = Config::$extension;
     if($encrypting){
-        $name = $file->getFilename().".superencrypted";
+        $name = $file->getFilename().$ext;
     } else {
-        $name = preg_replace("/\.superencrypted/","",$file->getFilename());
+        $name = preg_replace("/$ext/","",$file->getFilename());
     }
+    $name = preg_replace("/\s/","_",$name);
 
 
     header('Content-Description: File Transfer');
