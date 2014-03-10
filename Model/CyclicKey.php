@@ -3,11 +3,8 @@
 namespace Model;
 
 
-class CyclicKey implements Key
+class CyclicKey extends SimpleCharacterStream implements Key
 {
-    private $_data;
-    private $_offset;
-
     function __construct($key)
     {
         $this->_offset = 0;
@@ -16,18 +13,6 @@ class CyclicKey implements Key
         } else {
             throw new \UnexpectedValueException('Nonempty string key expected');
         }
-    }
-
-
-    public function getLength()
-    {
-        return strlen($this->_data);
-    }
-
-
-    public function rewind()
-    {
-        return $this->_offset = 0;
     }
 
     public function nextChar()
