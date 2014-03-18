@@ -1,14 +1,15 @@
-<?php
+<?php //kod wykonywany po wyslaniu formularza
 include_once('Model/File.php');
 include_once('Model/CharacterStream.php');
 include_once('Model/SimpleCharacterStream.php');
 include_once('Model/Config.php');
 include_once('Model/Content.php');
 include_once('Model/Cipher.php');
-include_once('Model/Key.php');
 include_once('Model/CyclicKey.php');
+//include_once('Model/CyclicKey.php');
 include_once('Model/CyclicXorCipher.php');
 
+//use=include w c
 use Model\CyclicKey;
 use Model\CyclicXorCipher;
 use Model\File;
@@ -16,50 +17,48 @@ use Model\Config;
 
 function prepareFilename($file)
 {
-    $encrypting = isset($_POST['encrypt']);
-    $ext = Config::$extension;
+    $encrypting = isset($_POST['encrypt']); //isset - sprawdza czy zmienna jest ustawiona(czy cos sie w niej znajduje)
+    $ext = Config::$extension; // :: - uruchamianie metody klasy bez tworzenia obiektu
     if ($encrypting) {
-        $name = $file->getFilename() . $ext;
+        $name = $file->getFilename() . $ext; //tworzymy obiekt file i wywolujemy metode getFilename
     } else {
-        $name = preg_replace("/$ext/", "", $file->getFilename());
+        $name = preg_replace("/$ext/", "", $file->getFilename());// kasuje rozszerzenie, wyszukuje $ext w filename,by zastapic "",czyli pustym polem
     }
-    $name = preg_replace("/\s/", "_", $name);
+    $name = preg_replace("/\s/", "_", $name); //spacje zamienia na podkreslenie
     return $name;
 }
-
+//wyswietla okienko pobierania
 function addHeaders($name, $processed)
 {
-    header('Content-Description: File Transfer');
+    header('Content-Description: File Transfer'); //header-wysyla surowy naglowek http
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename=' . $name);
     header('Expires: 0');
     header('Cache-Control: must-revalidate');
     header('Pragma: public');
     header('Content-Length: ' . strlen($processed));
-    ob_clean();
-    flush();
+    ob_clean(); //clean the output buffer
+    flush(); //oproznia bufory wyjsciowe PHP
 }
 
 
 function prepareFile()
-{
-    $name = $_FILES["file"]["name"];
-    $path = $_FILES["file"]["tmp_name"];
-    $destination = Config::$tmpPath . $name;
-    move_uploaded_file($path, $destination);
-    $path = $destination;
-    $file = new File($name, $path);
-    return $file;
+{//tablica FILES zawiera dane pliku wyslanego przez formularz HTML
+    $name = $_FILES["file"]["name"]; //oryginalna nazwa wyslanego pliku
+    $path = $_FILES["file"]["tmp_name"]; //sciezka do pliku na serwerze, tymczasowa nazwa pliku,ktory zostal wyslany na serwer,uzyta zostanie do skopiowania do folderu docelowego
+    $destination = Config::$tmpPath . $name; //plik na serwerze w bierzacym katalogu
+    move_uploaded_file($path, $destination); //przenosi zuploadowane pliki do nowej lokacji
+    return new File($destination, $name);
 }
 
 function processFile($content)
-{
+{ //$_POST uzywamy w formularzach
     $key = new CyclicKey($_POST['key']);
     $encrypting = isset($_POST['encrypt']);
     $processed = $encrypting ? CyclicXorCipher::encrypt($content, $key) : CyclicXorCipher::decrypt($content, $key);
     return $processed;
 }
-
+//wyjatki dla wysylanego pliku-przepisane z dokumentacji PHP
 if ($_FILES["file"]["error"] > 0) {
     $errorExplanations = array(
         0 => "There is no error, the file uploaded with success",
@@ -71,17 +70,17 @@ if ($_FILES["file"]["error"] > 0) {
     );
     echo "Error: " . $errorExplanations[$_FILES["file"]["error"]] . "<br>";
 } else {
-    try {
-        $file = prepareFile();
-        $content = $file->readFile();
-        $processed = processFile($content);
-        $name = prepareFilename($file);
-        addHeaders($name, $processed);
-        echo $processed;
-    } catch (Exception $e) {
+    try { //w bloku try powinien znalezc sie kod, ktory ewentualnie moze wyrzucic jakis wyjatek
+        $preparedFile = prepareFile();
+        $content = $preparedFile->readFile();//odczytanie zawartosci pliku
+        $processed = processFile($content); //szyfrowanie
+        $name = prepareFilename($preparedFile); //dodawanie lub usuwanie rozszerzenia szyfrowania
+        addHeaders($name, $processed->getDataString());
+        echo $processed->getDataString();
+    } catch (Exception $e) { //zlapie dowolny wyjatek, po bloku try musi nastapic przynajmniej jeden blok catch
         echo $e->getMessage();
     } finally {
-        $file->closeFile();
+        $preparedFile->closeFile();
     }
 }
 ?>

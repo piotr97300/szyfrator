@@ -3,7 +3,7 @@
 namespace Model;
 
 
-class CyclicKey extends SimpleCharacterStream implements Key
+class CyclicKey extends SimpleCharacterStream
 {
     function __construct($key)
     {
@@ -20,7 +20,7 @@ class CyclicKey extends SimpleCharacterStream implements Key
         $char = $this->_data{$this->_offset};
         $this->_offset += 1;
         if ($this->_offset == $this->getLength()) {
-            $this->_offset = 0;
+            $this->rewind();
         }
         return $char;
     }

@@ -1,7 +1,7 @@
 <?php
 namespace Model;
 
-abstract class SimpleCharacterStream implements CharacterStream
+abstract class SimpleCharacterStream implements CharacterStream //implements-implementacja interfejsu
 {
     protected  $_data;
     protected  $_offset;
@@ -12,7 +12,7 @@ abstract class SimpleCharacterStream implements CharacterStream
         return strlen($this->_data);
     }
 
-    public function rewind()
+    public function rewind() //przewijac, powrot na poczatek
     {
         return $this->_offset = 0;
     }
@@ -22,17 +22,10 @@ abstract class SimpleCharacterStream implements CharacterStream
         if ($this->_offset == $this->getLength()) {
             return false;
         } else {
-            $char = $this->_data[$this->_offset];
+            $char = $this->_data[$this->_offset]; //kolejny znak z danych
             $this->_offset = $this->_offset + 1;
             return $char;
 
         }
     }
-
-    public function append($str)
-    {
-        $this->_data = $this->_data . $str;
-    }
-
-
 }

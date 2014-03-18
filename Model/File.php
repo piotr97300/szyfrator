@@ -20,11 +20,11 @@ class File
 
     public function readFile()
     {
-        if (file_exists($this->_path)) {
-            $handle = fopen($this->_path, 'r');
-            $content = fread($handle, filesize($this->_path));
-            fclose($handle);
-            return new Content($content);
+        if (file_exists($this->_path)) { //sprawdza czy sciezka istnieje
+            $handle = fopen($this->_path, 'r'); //otwarcie pliku, tylko do odczytu,wskaznik na poczatku pliku
+            $content = fread($handle, filesize($this->_path)); //odczytanie pliku,od poczatku do konca
+            fclose($handle);//zamyka otwarty wskaznik pliku
+            return new Content($content); //tworzy obiekt klasy Content z argumentem content,czyli zawartosc wczytanego pliku
         } else {
             return "404 - file '$this->_path' not found";
         }
@@ -32,6 +32,6 @@ class File
 
     public function closeFile()
     {
-        unlink($this->_path);
+        unlink($this->_path); //kasowanie pliku
     }
 } 

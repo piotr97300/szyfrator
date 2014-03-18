@@ -3,7 +3,7 @@
 namespace Model;
 
 
-class Content extends SimpleCharacterStream
+class Content extends SimpleCharacterStream //extends-dziedziczenie
 {
 
     public function getData()
@@ -18,9 +18,14 @@ class Content extends SimpleCharacterStream
         $this->_data = $_data;
     }
 
-    function __toString()
+    function getDataString() //po  co????
     {
-        return $this->_data;
+        return (string)$this->_data;
+    }
+
+    public function append($str)//dodaje znak na koniec pliku
+    {
+        $this->_data = $this->_data . $str; //kropka laczy stringi
     }
 
 }

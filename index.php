@@ -1,6 +1,6 @@
 <html>
 <head>
-    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script> <!--biblioteka do java script-->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
@@ -8,11 +8,19 @@
 <body>
 
 <div class="jumbotron">
-<form class="form-horizontal" role="form" action="process_with_xor.php" target="_blank" method="post"
+    <div class="form-group">
+        <label for="file" class="col-sm-2 control-label"></label>
+        <h1>
+            <span class="label label-primary">Scrambler</span>
+        </h1>
+    </div>
+    </br>
+
+    <form class="form-horizontal" role="form" action="process_with_xor.php" target="_blank" method="post"
       enctype="multipart/form-data">
+
     <div class="form-group">
         <label for="file" class="col-sm-2 control-label">File</label>
-
         <div class="col-sm-10">
             <input type="file" class="form-control" id="file" name="file">
         </div>
@@ -33,6 +41,12 @@
         </div>
     </div>
 </form>
+   <!--
+   <div class="form-group">
+        <label for="file" class="col-sm-2 control-label"></label>
+            &copy 2014 Piotr Greger
+    </div>
+    -->
 </div>
 </body>
 </html>
